@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/favicon.gif" type="image/gif" />
+    <link rel="shortcut icon" href="img/icon.gif" type="image/gif" />
+    <title>eBPF: Into the Kernel Space</title>
+    <link href="https://fonts.cdnfonts.com/css/google-sans" rel="stylesheet">
+    <link rel="stylesheet" href="revealjs/dist/reset.css">
+    <link rel="stylesheet" href="revealjs/dist/reveal.css">
+    <link rel="stylesheet" href="revealjs/dist/theme/black.css">
+    <link href="https://fonts.cdnfonts.com/css/comic-neue" rel="stylesheet">
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="css/highlight-github-dark.css">
+    <script src="revealjs/plugin/highlight/highlight.js"></script>
+    <!-- <link rel="stylesheet" href="css/glitch.css"> -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js"></script>
+    <style>
+        .reveal-viewport {
+            background-color: #000000 !important;
+        }
+
+        * :not(i) {
+            font-family: 'Google Sans', sans-serif !important;
+        }
+
+        h1 {
+            text-transform: none !important
+        }
+
+        h2 {
+            text-transform: none !important
+        }
+
+        h3 {
+            text-transform: none !important
+        }
+
+        .blue {
+            color: #538FF7 !important;
+        }
+
+        .red {
+            color: #EC5E4F !important;
+        }
+
+        .yellow {
+            color: #F6BD41 !important;
+        }
+
+        .green {
+            color: #65B867 !important;
+        }
+
+        table {
+            font-size: 0.5em;
+        }
+
+        .stack-machine {
+            display: flex;
+            flex-direction: column-reverse !important;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .stack-element {
+            border: 1px solid black;
+            text-align: center;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            margin: 1px 0;
+            transition: all 0.5s ease;
+        }
+
+        .stack-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-right: 5px;
+        }
+
+        .full-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+    </style>
+
+</head>
+
+<body>
+    <video class="video-background" style="display: none;" playsinline autoplay muted loop>
+        <source src="video/background_web_compressed.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <iframe id="kernel-map-iframe" style="display: none;" class="adjust-full-screeb" src="https://makelinux.github.io/kernel/map/" frameborder="0"></iframe>
+    <div class="slides-background"></div>
+    <div class="reveal">
+
+        <div class="slides">
+            <section id="black-slide">
+            </section>
+
+            <section>
+                <section>
+                    <h2>What is a <span class="glitch">Kernel</span>?</h2>
+                </section>
+                <section>
+                    <p>
+                        The system that manages the <span class="glitch">resources</span> of the computer, and <span class="glitch">provides</span> an <span class="glitch">interface</span> between software and hardware.
+                    </p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>
+                        <span class="glitch">Process</span> and Kernel Comunicatoin
+                    </h2>
+                </section>
+                <section data-auto-animate>
+                    <h3>User Space</h3>
+                </section>
+                <section data-auto-animate>
+                    <h3>User Space</h3>
+                    <p>⬇️</p>
+                    <h3 class="glitch">Kernel Space</h3>
+                </section>
+                <section data-auto-animate>
+                    <h3>User Space</h3>
+                    <p>⬇️</p>
+                    <h3 class="glitch">System Calls</h3>
+                    <p>⬇️</p>
+                    <h3 >Kernel Space</h3>
+                </section>
+           
+
+            </section>
+            <section id="kernel-map-slide">
+                    
+            </section>
+    
+            <section>
+                <section>
+                    <h1>
+                        BPF
+                    </h1>
+                    <p>Berkeley Packet Filter</p>
+                </section>
+                <section>
+                    <img class="" src="img/bpf-paper.png" alt="bpf-paper" width="1000px" height="auto">
+                </section>
+            </section>
+ 
+            <section>
+                <section id="ebpf-logo-slide">
+                    <div class="glitch">
+                        <img class="ebpf-logo-f overlay-img" src="img/ebpf-logo.svg" alt="ebpf" width="600px"
+                            height="210px">
+                        <img class="ebpf-logo-b backing-img" src="img/ebpf-logo.png" alt="ebpf" width="620px"
+                            height="225px">
+                    </div>
+                    <h3 class="glitch">Into the Kernel Space</h3>
+                </section>
+                <section>
+                    <h2>@adawolfs</h2>
+                    <p class="glitch">
+                        Brilliant, but lazy.
+                    </p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <p>
+                        eBPF is a <span class="glitch">kernel</span> technology that allows to <span class="glitch">dynamically extend</span> the functionalities of the
+                        kernel <span class="glitch">at runtime</span>.
+                    </p>
+                </section>
+                <section>
+                    <p>
+                        eBPF was originally created by engineers from Facebook (Meta) and <span class="glitch">Isovalent.</span>
+                    </p>
+                </section>
+
+                <section>
+                    <p>
+                        When a new process is created, a new call to <span class="glitch">execve</span> syscall is done, which normally results in
+                        scheduling the new process execution in the kernel.
+                    </p>
+                </section>
+                <section>
+                    <p>
+                        eBPF can attach a program to <span class="glitch">kernel events</span> and use it to act upon them, for example for
+                        <span class="glitch">observability</span>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="glitch">eBPF Hook</h2>
+                    <pre data-id="code-animation"><code class="hljs language-c" data-trim ><script type="text/template">
+                        int syscall__ret_execve(struct pt_regs *ctx) {
+                            struct comm_event event = {
+                                .pid = bpf_get_current_pid_tgid() >> 32,
+                                .type = TYPE_RETURN,
+                            };
+                        
+                            bpf_get_current_comm(&event.comm, sizeof(event.comm));
+                            comm_events.perf_submit(ctx, &event, sizeof(event));
+                            return 0;
+                        }
+                    </script></code></pre>
+                </section>
+                <section>
+                    <h2 class="glitch">Syscall Hook</h2>
+                    <img class="r-stretch" src="img/ebpf/syscall-hook.jpg" alt="syscall-hook">
+                </section>
+                <section>
+                    <p>
+                        Since August 2021, the <span class="glitch">eBPF Foundation</span> has been fostering the development of the technology
+                        and its community.
+                    </p>
+                </section>
+            </section>
+            <section>
+                <img class="r-stretch" src="img/questions.gif" alt="questions">
+                <h2 class="glitch">Questions?</h2>
+            </section>
+
+            <section>
+                <section>
+                    <h1>With <span class="glitch">great power</span></h1>
+                    <p>there must also come <span class="glitch">great responsibility</span></p>
+                </section>
+                <section>
+                    <h2 class="glitch">Privileges</h2>
+                    <p>Only processes with <span class="glitch">root</span> rights or with <span
+                            class="glitch">CAP_BPF</span> capability can load eBPF programs into the Kernel</p>
+                </section>
+                <section>
+                    <h3 class="glitch">Verification and JIT Compilation</h3>
+                    <img class="r-stretch" src="img/ebpf-loaded-program.png" alt="ebpf-loaded-program">
+                    <p class="r-fit-text">
+                        Programs are verified when they are <span class="glitch">injected</span> into the kernel, they
+                        <span class="glitch">should not</span> block, loop forever,
+                        or <span class="glitch">access memory outside of the stack.</span>
+                    </p>
+                </section>
+
+            </section>
+            <section>
+                <section>
+                    <h2>How is <span class="glitch">eBPF</span> related to <span class="glitch">Cloud Native</span>?</h4>
+                </section>
+                <section>
+                    <p><span class="glitch">Enhanced Security</span> and Observavility Tooling</p>
+                    <p>Extensability without <span class="glitch">Kernel</span> Updates</p>
+                    <p>Container and Kubernetes <span class="glitch">awareness</span> into the Kernel</p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>eBPF Projects</h2>
+                </section>
+                <section>
+                    <h3>tcpdump</h3>
+                    <p>THE packet analyzer.</p>
+                </section>
+                <section>
+                    <h3>Cilium</h3>
+                    <p class="r-fit-text">Networking, Security, and Observability Solution</p>
+                    <img class="r-stretch" src="img/cilium-overview.png" alt="cilium-overview">
+                </section>
+                <section>
+                    <h3>Cilium Hubble</h3>
+                    <p class="r-fit-text">Network, Service & Security Observability for Kubernetes</p>
+                    <img class="r-stretch" src="img/hubble_arch.png" alt="hubble_arch">
+                </section>
+                <section>
+                    <h3>Cilium Tetragon</h3>
+                    <p class="r-fit-text">Realtime Security Observability & Runtime Enforcement</p>
+                    <img class="r-stretch" src="img/smart_observability.png" alt="smart_observability">
+                </section>
+            </section>
+            <section>
+                <h1>eBPF</h1>
+                <p><del>extendedBPF</del></p>
+                <p>No son siglas</p>
+            </section>
+            <section>
+                <h2>...continuara!</h2>
+            </section>
+            <section>
+                <div class="glitch">
+                    <img class="ebpf-logo-f overlay-img" src="img/ebpf-logo.svg" alt="ebpf" width="600px"
+                        height="210px">
+                    <img class="ebpf-logo-b backing-img" src="img/ebpf-logo.png" alt="ebpf" width="620px"
+                        height="225px">
+                </div>
+                <h3 class="glitch">Tracing across the Kernel Space</h3>
+            </section>
+<!--             
+            <section>
+                <pre class="mermaid">
+                    sequenceDiagram
+                    participant U as User Space
+                    participant K as Kernel Space
+                
+                    U->>K: fork()
+                    Note over K: Duplicate current process
+                    K->>U: Return child PID to parent
+                    K->>U: Return 0 to child
+                
+                    U->>K: exec()
+                    Note over K: Replace child process image
+                    K->>U: Start new process execution
+                    
+                </pre>
+            </section> -->
+        </div>
+    </div>
+
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="revealjs/plugin/notes/notes.js"></script>
+    <script src="revealjs/plugin/markdown/markdown.js"></script>
+    <script src="revealjs/plugin/highlight/highlight.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
+
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+    <script>
+
+        document.addEventListener('keypress', (event) => {
+            var name = event.key;
+            var code = event.code;
+            if (name === 'y') {
+                document.getElementsByClassName('video-background')[0].style.display = 'block';
+            }
+        }, false);
+
+        function manageMedia(event) {
+            event.currentSlide, event.indexh, event.indexv
+            document.getElementsByClassName('slides-background')[0].style.display = 'block';
+            document.getElementById('kernel-map-iframe').style.display = 'none';
+            if (event.currentSlide.id === 'ebpf-logo-slide') {
+                
+                document.getElementsByClassName('video-background')[0].style.display = 'block';
+                 document.getElementsByClassName('slides-background')[0].style.display = 'none';
+                // document.getElementById('space-travel').style.display = 'block';
+            }
+            
+            if (event.currentSlide.id === 'kernel-map-slide') {
+                
+                 document.getElementsByClassName('slides-background')[0].style.display = 'none';
+                 document.getElementById('kernel-map-iframe').style.display = 'block';
+                // document.getElementById('space-travel').style.display = 'block';
+            }
+            // document.getElementById('space-travel').style.display = 'none';
+            // if (event.currentSlide.id === 'black-slide') {
+            //     document.getElementById('space-travel').style.display = 'block';
+            // }
+
+            // if (event.currentSlide.id === 'everything') {
+            //     document.getElementById('space-travel').style.display = 'none';
+            // }
+        }
+        Reveal.on('ready', event => {
+            manageMedia(event)
+        });
+
+        Reveal.addEventListener('slidechanged', function (event) {
+            manageMedia(event)
+        });
+    </script>
+    <script type="module" src="js/powerg.js"></script>
+    <script>
+        PowerGlitch.glitch('.glitch')
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    </script>
+</body>
+
+</html>
